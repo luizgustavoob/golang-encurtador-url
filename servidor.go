@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	url "livro-go/github.com/luizgustavoob/encurtador/url"
+	url "github.com/golang-encurtador-url/url"
 )
 
 var (
