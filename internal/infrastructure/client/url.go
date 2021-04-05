@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/golang-encurtador-url/domain"
-	"github.com/golang-encurtador-url/infrastructure/storage"
 )
 
 const (
@@ -19,10 +18,10 @@ func init() {
 }
 
 type urlClient struct {
-	repository storage.Repository
+	repository domain.Repository
 }
 
-func NewURLClient(repository storage.Repository) *urlClient {
+func NewURLClient(repository domain.Repository) *urlClient {
 	return &urlClient{repository}
 }
 

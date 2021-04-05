@@ -9,9 +9,9 @@ import (
 
 	"github.com/golang-encurtador-url/domain/logger"
 	"github.com/golang-encurtador-url/domain/url"
-	"github.com/golang-encurtador-url/infrastructure/client"
-	"github.com/golang-encurtador-url/infrastructure/server"
-	storage "github.com/golang-encurtador-url/infrastructure/storage/repository"
+	"github.com/golang-encurtador-url/internal/infrastructure/client"
+	"github.com/golang-encurtador-url/internal/infrastructure/server"
+	"github.com/golang-encurtador-url/internal/infrastructure/storage"
 )
 
 var (

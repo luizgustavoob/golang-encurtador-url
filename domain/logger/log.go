@@ -5,24 +5,24 @@ import (
 	"log"
 )
 
-type logStr struct {
+type myLogStruct struct {
 	active bool
 }
 
-var mylog *logStr
+var mylog *myLogStruct
 
 func init() {
-	mylog = &logStr{active: true}
+	mylog = &myLogStruct{active: true}
+}
+
+func (l *myLogStruct) logar(formato string, valores ...interface{}) {
+	if l.active {
+		log.Printf(fmt.Sprintf("%s\n", formato), valores...)
+	}
 }
 
 func Configure(active *bool) {
 	mylog.active = *active
-}
-
-func (l *logStr) logar(formato string, valores ...interface{}) {
-	if l.active {
-		log.Printf(fmt.Sprintf("%s\n", formato), valores...)
-	}
 }
 
 func Logar(formato string, valores ...interface{}) {
