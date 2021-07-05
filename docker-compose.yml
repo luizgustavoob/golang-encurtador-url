@@ -1,8 +1,0 @@
-version: '3.0'
-services: 
-  api:
-    build: .
-    container_name: encurtador-url
-    ports: 
-      - "8888:8888"
-    command: ["go", "run", "cmd/golang-encurtador-url/main.go"]
