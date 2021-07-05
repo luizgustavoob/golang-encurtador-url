@@ -1,4 +1,4 @@
-# Encurtador de URLS
+# Encurtador de URLs
 
 API construída a partir do livro [Programando em Go](https://www.casadocodigo.com.br/products/livro-google-go), da casa do código, cujo objetivo é encurtar uma URL, tornando-a mais acessível.
 
