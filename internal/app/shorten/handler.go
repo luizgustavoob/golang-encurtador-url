@@ -52,11 +52,11 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	shortURL := fmt.Sprintf("%s/r/%s", h.baseUrl, u.ID)
 
-	w.WriteHeader(status)
+	h.logger.Printf("URL %s encurtada com sucesso: %s", u.Destination, shortURL)
+
 	w.Header().Add("Location", shortURL)
 	w.Header().Add("Link", fmt.Sprintf("<%s/api/stats/%s>; rel=\"stats\"", h.baseUrl, u.ID))
-
-	h.logger.Printf("URL %s encurtada com sucesso: %s", u.Destination, shortURL)
+	w.WriteHeader(status)
 }
 
 func (h *handler) extractURL(r *http.Request) string {
