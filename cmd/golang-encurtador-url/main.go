@@ -1,49 +1,42 @@
 package main
 
 import (
-	"flag"
-	"fmt"
+	"context"
+	"log"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/golang-encurtador-url/domain/logger"
-	"github.com/golang-encurtador-url/domain/url"
-	"github.com/golang-encurtador-url/infrastructure/client"
-	"github.com/golang-encurtador-url/infrastructure/server"
-	storage "github.com/golang-encurtador-url/infrastructure/storage/repository"
+	"github.com/golang-encurtador-url/internal/app"
+	"github.com/golang-encurtador-url/internal/infra"
+	"go.uber.org/fx"
 )
-
-var (
-	port      *int
-	activeLog *bool
-)
-
-func init() {
-	port = flag.Int("p", 8888, "porta")
-	activeLog = flag.Bool("l", true, "log ativo/inativo")
-	flag.Parse()
-}
 
 func main() {
-	stats := make(chan string)
-	defer close(stats)
+	fx.New(
+		fx.Options(
+			fx.Provide(
+				newLogger,
+				newStatsChannel,
+			),
+			fx.Invoke(hookCloseChannel),
+		),
+		app.Module,
+		infra.Module,
+	).Run()
+}
 
-	logger.Configure(activeLog)
+func newLogger() *log.Logger {
+	return log.New(os.Stdout, "", log.LstdFlags)
+}
 
-	repository := storage.NewMemoryRepository()
-	urlClient := client.NewURLClient(repository)
-	urlService := url.NewService(urlClient, stats)
+func newStatsChannel() chan string {
+	return make(chan string)
+}
 
-	go urlService.CollectStatistics()
-
-	handler := server.NewHandler(urlService, fmt.Sprintf("http://localhost:%d", *port), port)
-	server := server.New(*port, handler)
-	logger.Logar("Iniciando servidor na porta %d", *port)
-	server.ListenAndServe()
-
-	stopChan := make(chan os.Signal, 1)
-	signal.Notify(stopChan, syscall.SIGTERM, syscall.SIGINT)
-	<-stopChan
-	server.Shutdown()
+func hookCloseChannel(lc fx.Lifecycle, stats chan string) {
+	lc.Append(fx.Hook{
+		OnStop: func(c context.Context) error {
+			close(stats)
+			return nil
+		},
+	})
 }
