@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	appmocks "github.com/golang-encurtador-url/internal/app/mocks"
+	"github.com/golang-encurtador-url/internal/app/mocks"
 	"github.com/golang-encurtador-url/internal/app/statsviewer"
 	"github.com/golang-encurtador-url/internal/app/urlentities"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +15,15 @@ import (
 )
 
 func TestViewerHandler(t *testing.T) {
+
+	t.Run("should create handler", func(t *testing.T) {
+		service := new(mocks.ViewerServiceMock)
+		handler := statsviewer.NewHandler(service)
+
+		assert.NotNil(t, handler)
+		assert.Equal(t, "/api/stats/{short}", handler.GetPattern())
+		assert.Equal(t, http.MethodGet, handler.GetMethod())
+	})
 
 	t.Run("should return 200", func(t *testing.T) {
 		url := &urlentities.Url{
@@ -27,7 +36,7 @@ func TestViewerHandler(t *testing.T) {
 			Clicks: 2,
 		}
 
-		srvMock := new(appmocks.ViewerServiceMock)
+		srvMock := new(mocks.ViewerServiceMock)
 		srvMock.On("Find", mock.Anything).Return(url)
 		srvMock.On("GetStatistics", mock.Anything).Return(stats)
 
@@ -47,7 +56,7 @@ func TestViewerHandler(t *testing.T) {
 	})
 
 	t.Run("should return 404", func(t *testing.T) {
-		srvMock := new(appmocks.ViewerServiceMock)
+		srvMock := new(mocks.ViewerServiceMock)
 		srvMock.On("Find", mock.Anything).Return(nil)
 
 		h := statsviewer.NewHandler(srvMock)

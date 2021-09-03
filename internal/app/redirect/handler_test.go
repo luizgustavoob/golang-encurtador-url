@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	appmocks "github.com/golang-encurtador-url/internal/app/mocks"
+	"github.com/golang-encurtador-url/internal/app/mocks"
 	"github.com/golang-encurtador-url/internal/app/redirect"
 	"github.com/golang-encurtador-url/internal/app/urlentities"
 	"github.com/stretchr/testify/assert"
@@ -14,6 +14,16 @@ import (
 )
 
 func TestRedirectHandler(t *testing.T) {
+
+	t.Run("should create handler", func(t *testing.T) {
+		service := new(mocks.RedirectServiceMock)
+		handler := redirect.NewHandler(service)
+
+		assert.NotNil(t, handler)
+		assert.Equal(t, "/r/{short}", handler.GetPattern())
+		assert.Equal(t, http.MethodGet, handler.GetMethod())
+
+	})
 
 	t.Run("should return 301", func(t *testing.T) {
 		createdAt := time.Now()
@@ -23,7 +33,7 @@ func TestRedirectHandler(t *testing.T) {
 			Destination: "destination",
 		}
 		stats := make(map[string]int)
-		srvMock := new(appmocks.RedirectServiceMock)
+		srvMock := new(mocks.RedirectServiceMock)
 		srvMock.On("Find", mock.Anything).Return(url)
 		srvMock.AddStatisticsFn = func(urlParam *urlentities.Url) {
 			stats[urlParam.ID] = 1
@@ -40,7 +50,7 @@ func TestRedirectHandler(t *testing.T) {
 	})
 
 	t.Run("should return 404", func(t *testing.T) {
-		srvMock := new(appmocks.RedirectServiceMock)
+		srvMock := new(mocks.RedirectServiceMock)
 		srvMock.On("Find", mock.Anything).Return(nil)
 
 		h := redirect.NewHandler(srvMock)

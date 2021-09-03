@@ -1,4 +1,4 @@
-package appmocks
+package mocks
 
 import (
 	"github.com/golang-encurtador-url/internal/app/urlentities"

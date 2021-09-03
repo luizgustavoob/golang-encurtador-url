@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	appmocks "github.com/golang-encurtador-url/internal/app/mocks"
+	"github.com/golang-encurtador-url/internal/app/mocks"
 	"github.com/golang-encurtador-url/internal/app/shorten"
 	"github.com/golang-encurtador-url/internal/app/urlentities"
 	"github.com/stretchr/testify/assert"
@@ -22,13 +22,22 @@ func TestShortenHandler(t *testing.T) {
 	buffer := &bytes.Buffer{}
 	logger := log.New(buffer, "", log.LstdFlags)
 
+	t.Run("should create handler", func(t *testing.T) {
+		service := new(mocks.ShortenServiceMock)
+		handler := shorten.NewHandler(service, logger, "")
+
+		assert.NotNil(t, handler)
+		assert.Equal(t, "/api/encurtar", handler.GetPattern())
+		assert.Equal(t, http.MethodPost, handler.GetMethod())
+	})
+
 	t.Run("should return 200", func(t *testing.T) {
 		url := &urlentities.Url{
 			ID:          "id",
 			CreatedAt:   time.Now(),
 			Destination: "destination",
 		}
-		srvMock := new(appmocks.ShortenServiceMock)
+		srvMock := new(mocks.ShortenServiceMock)
 		srvMock.On("FindOrCreateURL", mock.Anything).Return(url, false, nil)
 
 		h := shorten.NewHandler(srvMock, logger, "baseUrl")
@@ -50,7 +59,7 @@ func TestShortenHandler(t *testing.T) {
 			CreatedAt:   time.Now(),
 			Destination: "destination",
 		}
-		srvMock := new(appmocks.ShortenServiceMock)
+		srvMock := new(mocks.ShortenServiceMock)
 		srvMock.On("FindOrCreateURL", mock.Anything).Return(url, true, nil)
 
 		h := shorten.NewHandler(srvMock, logger, "baseUrl")
@@ -67,7 +76,7 @@ func TestShortenHandler(t *testing.T) {
 	})
 
 	t.Run("should return 400", func(t *testing.T) {
-		srvMock := new(appmocks.ShortenServiceMock)
+		srvMock := new(mocks.ShortenServiceMock)
 		srvMock.On("FindOrCreateURL", mock.Anything).Return(nil, false, errors.New("handler error"))
 
 		h := shorten.NewHandler(srvMock, logger, "baseUrl")
